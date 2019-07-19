@@ -85,9 +85,10 @@ class ResumePointCalculator:
             for linkdict in range(len(page.getLinks())):
                 links.append(page.getLinks()[linkdict]['uri'])
         resumeData = self.resumeToText()
-        for page in range(len(resumeData)):
-            urls = re.findall("[localhost|http|https|ftp|file]+://[\w\S(\.|:|/)]+", 
-                              resumeData[page])
+        for page in resumeData:
+            urls = re.findall("[WWW|www|http|https|ftp|file|bit|urlzs|tiny|shorturl|is]+://[\w\S(\.|:|/)]+",
+                              page)
+
             for linkOnPage in urls:
                 links.append(linkOnPage)
         return list(set(links))
