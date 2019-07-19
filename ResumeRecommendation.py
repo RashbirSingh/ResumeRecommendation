@@ -77,12 +77,19 @@ class ResumePointCalculator:
         List of links inside the resume
     """
     def getLinksList(self):
-        #TODO: add regex based hyperlink detection
+        #TODO: improve regex based hyperlink detection
         links = []
+        urls =[]
         for pagenumber in range(self.resume.pageCount):
             page = self.resume[pagenumber]
             for linkdict in range(len(page.getLinks())):
                 links.append(page.getLinks()[linkdict]['uri'])
+        resumeData = self.resumeToText()
+        for page in range(len(resumeData)):
+            urls = re.findall("[localhost|http|https|ftp|file]+://[\w\S(\.|:|/)]+", 
+                              resumeData[page])
+            for linkOnPage in urls:
+                links.append(linkOnPage)
         return list(set(links))
     
     """Reads the resume and gives list per page in text format
