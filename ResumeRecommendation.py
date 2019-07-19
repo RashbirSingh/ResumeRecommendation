@@ -8,6 +8,7 @@ Created on Fri Jul 19 11:49:27 2019
 
 import pandas as pd
 import numpy as np
+import re
 import fitz
 
 class ResumePointCalculator:
@@ -15,7 +16,7 @@ class ResumePointCalculator:
     def __init__(self, resumeLocation):
         self.resume = fitz.open(resumeLocation)
       
-    """Gets and prints the spreadsheet's header columns
+    """Opened resume object using fitz and return the opened file
     
     Parameters
     ----------
@@ -30,7 +31,7 @@ class ResumePointCalculator:
         resumeObject = fitz.open(self.resumeLocation)
         return resumeObject
         
-    """Gets and prints the spreadsheet's header columns
+    """Gives information about pdf
     
     Parameters
     ----------
@@ -63,7 +64,7 @@ class ResumePointCalculator:
                 "HaveImages": imageList
                 }
         
-    """Gets and prints the spreadsheet's header columns
+    """Gives links in the pdf if have attached hyperlinks
     
     Parameters
     ----------
@@ -76,6 +77,7 @@ class ResumePointCalculator:
         List of links inside the resume
     """
     def getLinksList(self):
+        #TODO: add regex based hyperlink detection
         links = []
         for pagenumber in range(self.resume.pageCount):
             page = self.resume[pagenumber]
@@ -83,7 +85,31 @@ class ResumePointCalculator:
                 links.append(page.getLinks()[linkdict]['uri'])
         return list(set(links))
     
-    def resumeToText(self, outputType):
+    """Reads the resume and gives list per page in text format
+    
+    Parameters
+    ----------
+    outputType : (default) Text
+        "text": (default) plain text with line breaks. No formatting, no text position details, no images.
+        "html": creates a full visual version of the page including any images. 
+                This can be displayed with your internet browser.
+        "dict": same information level as HTML, but provided as a Python dictionary. 
+                See TextPage.extractDICT() for details of its structure.
+        "rawdict": a super-set of TextPage.extractDICT(). 
+                It additionally provides character detail information like XML. See TextPage.extractRAWDICT() for details of its structure.
+        "xhtml": text information level as the TEXT version but includes images. 
+                Can also be displayed by internet browsers.
+        "xml": contains no images, but full position and font information down to each single text character. 
+                Use an XML module to interpret.
+
+    
+    Returns
+    -------
+    list
+        List of text inside the resume with size equals number of pages.
+    """
+    
+    def resumeToText(self, outputType="text"):
         resumeData = []
         for pagenumber in range(self.resume.pageCount):
             page = self.resume[pagenumber]
