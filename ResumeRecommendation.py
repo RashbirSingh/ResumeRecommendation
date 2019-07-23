@@ -10,6 +10,9 @@ import pandas as pd
 import numpy as np
 import re
 import fitz
+from sklearn.feature_extraction.text import TfidfVectorizer
+import spacy
+from spacy.matcher import Matcher
 
 class ResumePointCalculator:
     
@@ -123,6 +126,32 @@ class ResumePointCalculator:
             page = self.resume[pagenumber]
             resumeData.append(page.getText(outputType))
         return resumeData
+    
+
+    
+    def extract_name(self, resume_text):
+        # load pre-trained model
+        nlp = spacy.load('en_core_web_sm')
+        
+        # initialize matcher with a vocab
+        matcher = Matcher(nlp.vocab)
+        nlp_text = nlp(resume_text)
+        
+        # First name and Last name are always Proper Nouns
+        pattern = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
+        
+        matcher.add('NAME', None, *pattern)
+        
+        matches = matcher(nlp_text)
+        
+        for match_id, start, end in matches:
+            span = nlp_text[start:end]
+            return span.text
+        
+    def tfidfScoring(self, corpus):
+        vectorizer = TfidfVectorizer()
+        Score = vectorizer.fit_transform(corpus)
+        print(Score, vectorizer.get_feature_names())
         
         
         
