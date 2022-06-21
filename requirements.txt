@@ -58,7 +58,7 @@ neurdflib==5.0.0.post1
 nibabel==2.4.1
 nipype==1.2.0
 notebook==6.0.0
-numpy==1.16.4
+numpy==1.22.0
 numpydoc==0.9.1
 openpyxl==2.6.2
 packaging==19.0
